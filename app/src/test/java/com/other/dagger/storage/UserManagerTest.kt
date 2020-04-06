@@ -1,11 +1,14 @@
 package com.other.dagger.storage
 
+import com.other.dagger.user.UserComponent
 import com.other.dagger.user.UserManager
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 
 class UserManagerTest {
 
@@ -14,8 +17,13 @@ class UserManagerTest {
 
     @Before
     fun setup() {
+        val userComponentFactory = mock(UserComponent.Factory::class.java)
+        val userComponent = mock(UserComponent::class.java)
+
+        `when`(userComponentFactory.create()).thenReturn(userComponent)
+
         storage = FakeStorage()
-        userManager = UserManager(storage)
+        userManager = UserManager(storage, userComponentFactory)
     }
 
     @Test

@@ -8,16 +8,25 @@ import com.other.dagger.R
 import com.other.dagger.main.MainActivity
 import com.other.dagger.registration.enterdetails.EnterDetailsFragment
 import com.other.dagger.registration.termsandconditions.TermsAndConditionsFragment
+import javax.inject.Inject
 
 class RegistrationActivity : AppCompatActivity() {
 
+    lateinit var registrationComponent: RegistrationComponent
+
+    @Inject
     lateinit var registrationViewModel: RegistrationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // must do this before super.onCreate, cause in super.onCreate, an Activity during the
+        // restore phase will attach fragments that might want to access activity bindings.
+        registrationComponent =
+            (application as MyApplication).appComponent.registrationComponent().create()
+        registrationComponent.inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
 
-        registrationViewModel = RegistrationViewModel((application as MyApplication).userManager)
         supportFragmentManager.beginTransaction()
             .add(R.id.fragment_holder, EnterDetailsFragment())
             .commit()
